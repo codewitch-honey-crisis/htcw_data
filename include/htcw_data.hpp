@@ -117,6 +117,7 @@ namespace data {
         using key_type = TKey;
         using mapped_type = TValue;
         using value_type = simple_pair<TKey,TValue>;
+        inline size_t size() const { return m_size; }
         void clear() {
             m_size = 0;
             for(int i = 0;i<Size;++i) {
