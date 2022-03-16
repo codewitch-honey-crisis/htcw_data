@@ -103,10 +103,10 @@ namespace data {
         static_assert(Size>0,"Size must be a positive integer");
         using bucket_type = simple_vector<simple_pair<TKey,TValue>>;
         bucket_type m_buckets[Size];
-        size_t m_size;
         int(*m_hash_function)(const TKey&);
+        size_t m_size;
     public:
-        simple_fixed_map(int(*hash_function)(const TKey&),
+        simple_fixed_map(int(hash_function)(const TKey&),
                         void*(allocator)(size_t) = ::malloc,
                         void*(reallocator)(void*, size_t) = ::realloc,
                         void(deallocator)(void*) = ::free) : m_hash_function(hash_function),m_size(0) {
@@ -116,7 +116,7 @@ namespace data {
         }
         using key_type = TKey;
         using mapped_type = TValue;
-        using value_type = simple_pair<TKey,TValue>;
+        using value_type = simple_pair<const TKey,TValue>;
         inline size_t size() const { return m_size; }
         void clear() {
             m_size = 0;
@@ -139,7 +139,9 @@ namespace data {
             
             if(bucket.push_back({value.key,value.value})) {
                 ++m_size;
+                return true;
             }
+            return false;
         }
         const mapped_type* find(const key_type& key) const {
             int h = m_hash_function(key)%Size;
