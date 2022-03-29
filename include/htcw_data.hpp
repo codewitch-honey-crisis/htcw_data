@@ -110,7 +110,7 @@ namespace data {
                         void*(allocator)(size_t) = ::malloc,
                         void*(reallocator)(void*, size_t) = ::realloc,
                         void(deallocator)(void*) = ::free) : m_hash_function(hash_function),m_size(0) {
-            for(int i = 0;i<Size;++i) {
+            for(size_t i = 0;i<(int)Size;++i) {
                 m_buckets[i]=bucket_type(allocator,reallocator,deallocator);
             }
         }
@@ -120,7 +120,7 @@ namespace data {
         inline size_t size() const { return m_size; }
         void clear() {
             m_size = 0;
-            for(int i = 0;i<Size;++i) {
+            for(size_t i = 0;i<Size;++i) {
                 m_buckets->clear();
             }
         }
