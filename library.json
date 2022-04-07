@@ -1,6 +1,6 @@
 {
     "name": "htcw_data",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Provides dependency free data structures",
     "keywords": ["vector","map","data"],
     "authors": {
@@ -8,7 +8,7 @@
         "homepage": "https://www.codeproject.com/Members/code-witch"
     },
     "license": "MIT",
-    "frameworks": ["arduino"],
+    "frameworks": "*",
     "platforms": "*",
     "build": {
         "unflags": "-std=gnu++11",
