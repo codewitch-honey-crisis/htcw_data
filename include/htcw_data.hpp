@@ -160,7 +160,20 @@ namespace data {
             }
             return nullptr;
         }
-        
+        mapped_type* find_mutable(const key_type& key) {
+            int h = m_hash_function(key)%Size;
+            bucket_type& bucket = m_buckets[h];
+            if(bucket.size()) {
+                auto it = bucket.begin();
+                while(it!=bucket.end()) {
+                    if(it->key==key) {
+                        return &it->value;
+                    }
+                    ++it;
+                }
+            }
+            return nullptr;
+        }
     };
     // a circular buffer
     template <typename T,size_t Capacity>
