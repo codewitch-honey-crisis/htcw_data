@@ -1,6 +1,6 @@
 {
     "name": "htcw_data",
-    "version": "1.0.8",
+    "version": "1.0.81",
     "description": "Provides dependency free data structures",
     "keywords": ["vector","stack","map","data"],
     "authors": {

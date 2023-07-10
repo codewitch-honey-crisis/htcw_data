@@ -34,6 +34,8 @@ namespace data {
 
     public:
         using value_type = T;
+        using iterator = value_type*;
+        using const_iterator = const value_type*;
         simple_vector(void*(allocator)(size_t) = ::malloc,
                     void*(reallocator)(void*, size_t) = ::realloc,
                     void(deallocator)(void*) = ::free) : 
@@ -53,10 +55,10 @@ namespace data {
         }
         inline size_t size() const { return m_size; }
         inline size_t capacity() const { return m_capacity; }
-        inline const T* cbegin() const { return m_begin; }
-        inline const T* cend() const { return m_begin + m_size; }
-        inline T* begin() { return m_begin; }
-        inline T* end() { return m_begin + m_size; }
+        inline const const_iterator cbegin() const { return m_begin; }
+        inline const const_iterator cend() const { return m_begin + m_size; }
+        inline iterator begin() { return m_begin; }
+        inline iterator end() { return m_begin + m_size; }
         void clear() {
             if(m_begin) {
                 m_size = 0;
@@ -107,6 +109,8 @@ namespace data {
 
     public:
         using value_type = T;
+        using iterator = value_type*;
+        using const_iterator = const value_type*;
         simple_stack(void*(allocator)(size_t) = ::malloc,
                     void*(reallocator)(void*, size_t) = ::realloc,
                     void(deallocator)(void*) = ::free) : 
@@ -126,10 +130,10 @@ namespace data {
         }
         inline size_t size() const { return m_size; }
         inline size_t capacity() const { return m_capacity; }
-        inline const T* cbegin() const { return m_begin; }
-        inline const T* cend() const { return m_begin + m_size; }
-        inline T* begin() { return m_begin; }
-        inline T* end() { return m_begin + m_size; }
+        inline const const_iterator cbegin() const { return m_begin; }
+        inline const const_iterator cend() const { return m_begin + m_size; }
+        inline iterator begin() { return m_begin; }
+        inline iterator end() { return m_begin + m_size; }
         void clear() {
             if(m_begin) {
                 m_size = 0;
