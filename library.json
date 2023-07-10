@@ -2,7 +2,7 @@
     "name": "htcw_data",
     "version": "1.0.8",
     "description": "Provides dependency free data structures",
-    "keywords": ["vector","map","data"],
+    "keywords": ["vector","stack","map","data"],
     "authors": {
         "name":"honey the codewitch",
         "homepage": "https://www.codeproject.com/Members/code-witch"
