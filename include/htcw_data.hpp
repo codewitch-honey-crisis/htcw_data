@@ -73,6 +73,91 @@ namespace data {
             return true;
         }
     };
+
+        // dynamic stack of scalar (constructorless) data
+    template <typename T>
+    class simple_stack final {
+        void* (*m_allocator)(size_t);
+        void* (*m_reallocator)(void*, size_t);
+        void (*m_deallocator)(void*);
+        size_t m_size;  // size in number of T values
+        T* m_begin;
+        size_t m_capacity;  // allocated size in T values
+        bool resize(size_t new_size) {
+            size_t capacity = new_size;
+            if (capacity > this->m_capacity) {
+                size_t newcap = capacity + (this->m_capacity >> 1u);
+                void* data ;
+                if(this->m_begin) {
+                    data = m_reallocator(this->m_begin, newcap * sizeof(T));
+                } else {
+                    newcap=8;
+                    const size_t newsz = newcap*sizeof(T);
+                    data = m_allocator(newsz);
+                }
+                if (data) {
+                    this->m_capacity = newcap;
+                    this->m_begin = (T*)data;
+                } else
+                    return false; //error: not enough memory
+            }
+            this->m_size = new_size;
+            return true;
+        }
+
+    public:
+        using value_type = T;
+        simple_stack(void*(allocator)(size_t) = ::malloc,
+                    void*(reallocator)(void*, size_t) = ::realloc,
+                    void(deallocator)(void*) = ::free) : 
+                        m_allocator(allocator),
+                        m_reallocator(reallocator),
+                        m_deallocator(deallocator) {
+            m_begin = nullptr;
+            m_size = 0;
+            m_capacity = 0;
+        }
+        ~simple_stack() {
+            m_size = 0;
+            if (m_begin != nullptr) {
+                m_deallocator(m_begin);
+                m_begin = nullptr;
+            }
+        }
+        inline size_t size() const { return m_size; }
+        inline size_t capacity() const { return m_capacity; }
+        inline const T* cbegin() const { return m_begin; }
+        inline const T* cend() const { return m_begin + m_size; }
+        inline T* begin() { return m_begin; }
+        inline T* end() { return m_begin + m_size; }
+        void clear() {
+            if(m_begin) {
+                m_size = 0;
+                m_capacity = 0;
+                m_deallocator(m_begin);
+                m_begin = nullptr;
+            }
+        }
+        bool push(const T& value) {
+            if (!resize(m_size + 1)) {
+                return false;
+            }
+            m_begin[m_size - 1] = value;
+            return true;
+        }
+        T* pop() {
+            if(!m_size) {
+                return nullptr;
+            }
+            return &m_begin[--m_size];
+        }
+        T* peek(size_t index) {
+            if(index>=m_size) {
+                return nullptr;
+            }
+            return &m_begin[m_size-index-1];
+        }
+    };
     // a key value pair
     template<typename TKey, typename TValue> 
     struct simple_pair {
