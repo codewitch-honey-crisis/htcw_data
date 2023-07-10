@@ -323,9 +323,9 @@ namespace data {
             m_data[m_head] = value;
             advance();
         }
-        const value_type* peek() const {
+        const value_type* peek(size_t index = 0) const {
             if(!empty()) {
-                return m_data+m_tail;
+                return m_data+((m_tail+index)%size());
             }
             return nullptr;
         }
