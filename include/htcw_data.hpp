@@ -1,5 +1,6 @@
 #pragma once
 #include <stdlib.h>
+#include <string.h>
 namespace data {
     // dynamic vector of scalar (constructorless) data
     template <typename T>
@@ -59,7 +60,11 @@ namespace data {
         inline const_iterator cend() const { return m_begin + m_size; }
         inline iterator begin() { return m_begin; }
         inline iterator end() { return m_begin + m_size; }
-        void clear() {
+        void clear(bool keep_capacity=false) {
+            if(keep_capacity) {
+                m_size = 0;
+                return;
+            }
             if(m_begin) {
                 m_size = 0;
                 m_capacity = 0;
@@ -73,6 +78,22 @@ namespace data {
             }
             m_begin[m_size - 1] = value;
             return true;
+        }
+        void erase(iterator first, iterator last) {
+            if(last<first) {
+                iterator tmp;
+                tmp = first;
+                first = last;
+                last = tmp;
+            }
+            size_t start = first-m_begin;
+            size_t end = last-m_begin;
+            size_t erase_size = end-start+1;
+            if(last<m_begin+m_size-1) {
+                const size_t count = m_size-end;
+                memmove(first,last+1,sizeof(T)*count);    
+            }
+            m_size-=erase_size;
         }
     };
 
