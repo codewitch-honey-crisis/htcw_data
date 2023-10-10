@@ -185,7 +185,7 @@ namespace data {
     };
     // a key value pair
     template<typename TKey, typename TValue> 
-    struct simple_pair {
+    struct simple_pair final {
         TKey key;
         TValue value;
         simple_pair(TKey key,TValue value) : key(key), value(value) {
@@ -287,7 +287,7 @@ namespace data {
     };
     // a circular buffer
     template <typename T,size_t Capacity>
-    class circular_buffer {
+    class circular_buffer final {
         T m_data[Capacity];
         size_t m_head;
         size_t m_tail;
@@ -361,6 +361,132 @@ namespace data {
             return false;
         }
         
+    };
+    template<typename T> 
+    class simple_list {
+        void* (*m_allocator)(size_t);
+        void (*m_deallocator)(void*);
+        size_t m_size;  // size in number of T values
+        struct entry final {
+            T value;
+            entry* next;
+        };
+        entry* m_head;
+        entry* m_tail;
+    public:
+        using type = simple_list;
+        using value_type = T;
+        using reference = value_type&;
+        using pointer = value_type*;
+        class iterator final {
+            entry* m_current;
+        public:
+            iterator(entry* current) : m_current(current) {}
+            using value_type = T;
+            reference operator*() const { return m_current->value; }
+            pointer operator->() { return &m_current->value; }
+            // Prefix increment
+            iterator& operator++() {
+                m_current = m_current->next;
+                return *this;
+            }
+            // Postfix increment
+            iterator operator++(int) {
+                iterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+            bool operator!() {
+                return m_current==nullptr;
+            }
+            friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.m_current == rhs.m_current; };
+            friend bool operator!=(const iterator& lhs, const iterator& rhs) { return lhs.m_current != rhs.m_current; };
+        };
+        class const_iterator final {
+            friend class simple_list;
+            simple_list* m_parent;
+            entry* m_current;
+
+           public:
+            using value_type = T;
+            reference operator*() const { return m_current->value; }
+            pointer operator->() const { return &m_current->value; }
+            // Prefix increment
+            iterator& operator++() {
+                m_current = m_current->next;
+                return *this;
+            }
+            // Postfix increment
+            iterator operator++(int) {
+                iterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+            bool operator!() {
+                return m_current == nullptr;
+            }
+            friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.m_current == rhs.m_current; };
+            friend bool operator!=(const iterator& lhs, const iterator& rhs) { return lhs.m_current != rhs.m_current; };
+        };
+
+        simple_list(void*(allocator)(size_t) = ::malloc,
+                     void(deallocator)(void*) = ::free) : m_allocator(allocator),
+                                                          m_deallocator(deallocator) {
+            m_head = nullptr;
+            m_tail = nullptr;
+            m_size = 0;
+        }
+        size_t size() const {
+            return m_size;
+        }
+        bool push_back(const T& value) {
+            entry* p = (entry*)m_allocator(sizeof(entry));
+            if(p==nullptr) {
+                return false;
+            }
+            p->value=value;
+            p->next = nullptr;
+            if (m_head == nullptr) {
+                m_head = p;
+                m_tail = p;
+                m_size = 1;
+                return true;
+            }
+            ++m_size;
+            m_tail->next = p;
+            m_tail = p;
+            return true;
+        }
+        iterator begin() { return iterator(m_head); }
+        iterator end() { return iterator(m_tail->next); }
+        const_iterator cbegin() { return const_iterator(m_head); }
+        const_iterator cend() { return const_iterator(m_tail->next); }
+        bool push_front(const T& value) {
+            entry* p = (entry*)m_allocator(sizeof(entry));
+            if (p == nullptr) {
+                return false;
+            }
+            p->value = value;
+            p->next = m_head;
+            if (m_head == nullptr) {
+                m_head = p;
+                m_tail = p;
+                m_size = 1;
+                return true;
+            }
+            ++m_size;
+            m_head=p;
+            return true;
+        }
+        void clear() {
+            entry* p = m_head;
+            while(p!=nullptr) {
+                entry* n = p->next;
+                m_deallocator(p);
+                p=n;
+            }
+            m_size = 0;
+        }
     };
     
 }  // namespace data
