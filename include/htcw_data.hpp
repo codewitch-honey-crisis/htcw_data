@@ -459,8 +459,8 @@ class simple_list {
     }
     iterator begin() { return iterator(m_head); }
     iterator end() { return iterator(m_tail->next); }
-    const_iterator cbegin() { return const_iterator(m_head); }
-    const_iterator cend() { return const_iterator(m_tail->next); }
+    const_iterator cbegin() const { return const_iterator(m_head); }
+    const_iterator cend() const { return const_iterator(m_tail->next); }
     bool push_front(const T& value) {
         entry* p = (entry*)m_allocator(sizeof(entry));
         if (p == nullptr) {
