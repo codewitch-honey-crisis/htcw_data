@@ -36,6 +36,21 @@ class simple_vector final {
     using value_type = T;
     using iterator = value_type*;
     using const_iterator = const value_type*;
+    class accessor {
+        friend class simple_vector;
+        T* p;
+        accessor(T* ptr) : p(ptr) {
+        }
+
+       public:
+        accessor& operator=(const T& value) {
+            *p = value;
+            return *this;
+        }
+        operator T() const {
+            return *p;
+        }
+    };
     simple_vector(void*(allocator)(size_t) = ::malloc,
                   void*(reallocator)(void*, size_t) = ::realloc,
                   void(deallocator)(void*) = ::free) : m_allocator(allocator),
@@ -44,6 +59,9 @@ class simple_vector final {
         m_begin = nullptr;
         m_size = 0;
         m_capacity = 0;
+    }
+    accessor operator[](size_t index) {
+        return accessor(m_begin + index);
     }
     ~simple_vector() {
         m_size = 0;
