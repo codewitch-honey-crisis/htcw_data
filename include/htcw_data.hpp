@@ -29,7 +29,6 @@ class simple_vector final {
             } else
                 return false;  // error: not enough memory
         }
-        this->m_size = new_size;
         return true;
     }
 
@@ -55,6 +54,9 @@ class simple_vector final {
     }
     inline size_t size() const { return m_size; }
     inline size_t capacity() const { return m_capacity; }
+    inline bool reserve(size_t new_size) {
+        return resize(new_size);
+    }
     inline const_iterator cbegin() const { return m_begin; }
     inline const_iterator cend() const { return m_begin + m_size; }
     inline iterator begin() { return m_begin; }
@@ -75,7 +77,8 @@ class simple_vector final {
         if (!resize(m_size + 1)) {
             return false;
         }
-        m_begin[m_size - 1] = value;
+
+        m_begin[m_size++] = value;
         return true;
     }
     void erase(iterator first, iterator last) {
@@ -409,24 +412,24 @@ class simple_list {
 
        public:
         using value_type = T;
-        reference operator*() const { return m_current->value; }
-        pointer operator->() const { return &m_current->value; }
+        const reference operator*() const { return m_current->value; }
+        const pointer operator->() const { return &m_current->value; }
         // Prefix increment
-        iterator& operator++() {
+        const_iterator& operator++() const {
             m_current = m_current->next;
             return *this;
         }
         // Postfix increment
-        iterator operator++(int) {
-            iterator tmp = *this;
+        const_iterator operator++(int) {
+            const_iterator tmp = *this;
             ++(*this);
             return tmp;
         }
-        bool operator!() {
+        bool operator!() const {
             return m_current == nullptr;
         }
-        friend bool operator==(const iterator& lhs, const iterator& rhs) { return lhs.m_current == rhs.m_current; };
-        friend bool operator!=(const iterator& lhs, const iterator& rhs) { return lhs.m_current != rhs.m_current; };
+        friend bool operator==(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_current == rhs.m_current; };
+        friend bool operator!=(const const_iterator& lhs, const const_iterator& rhs) { return lhs.m_current != rhs.m_current; };
     };
 
     simple_list(void*(allocator)(size_t) = ::malloc,
