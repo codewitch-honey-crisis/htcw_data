@@ -430,7 +430,7 @@ class simple_list {
 
        public:
         using value_type = T;
-        const reference operator*() const { return m_current->value; }
+        reference operator*() const { return m_current->value; }
         pointer operator->() const { return &m_current->value; }
         // Prefix increment
         const_iterator& operator++() const {
