@@ -7,6 +7,6 @@ set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
 add_library(htcw_data INTERFACE)
 target_include_directories(htcw_data INTERFACE
-    "${PROJECT_SOURCE_DIR}/include"
+    "${PROJECT_SOURCE_DIR}"
     "${PROJECT_BINARY_DIR}"
 )
