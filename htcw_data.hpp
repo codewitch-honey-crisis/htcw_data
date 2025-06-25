@@ -121,7 +121,7 @@ class simple_vector final {
         size_t erase_size = end - start + 1;
         if (last < m_begin + m_size - 1) {
             const size_t count = m_size - end;
-            for(int i = 0;i<count;++i) {
+            for(size_t i = 0;i<count;++i) {
                 first[i]=*(last+1+i);
             }
             //memmove(first, last + 1, sizeof(T) * count);
